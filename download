@@ -1,0 +1,7 @@
+.gradle/
+build/
+.flat-java/
+.flat-res/
+release-key.jks
+*.jks
+*.keystore
