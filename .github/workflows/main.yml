@@ -48,3 +48,13 @@ jobs:
           name: Flip-Rush-7-Release
           path: "**/*.apk"
           if-no-files-found: error
+          
+        - name: Find built APK
+        run: find . -type f -name "*.apk" -print
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Flip-Rush-7-Release
+          path: "**/*.apk"
+          if-no-files-found: error
