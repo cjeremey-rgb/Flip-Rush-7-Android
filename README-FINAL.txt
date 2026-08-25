@@ -1,17 +1,37 @@
-Flip Rush 7 Android v1.2.0 - Microphone Wrapper Update
+FLIP RUSH 7 ANDROID v1.3.0 - FINAL RELEASE WRAPPER
+==================================================
 
-Live game: https://flip-rush-7-60k8.onrender.com/
-Package ID: com.fliprush7.app
-Version code: 3
-Version name: 1.2.0
+This package intentionally builds a SIGNED RELEASE APK only.
+The GitHub Actions workflow does NOT run assembleDebug.
 
-This update keeps the existing app shell and game unchanged, while explicitly enabling microphone access for WebRTC voice chat.
+Live game URL:
+https://flip-rush-7-60k8.onrender.com/
 
-Required Android permissions:
-- INTERNET
-- RECORD_AUDIO
-- MODIFY_AUDIO_SETTINGS
+Android identity:
+Package: com.fliprush7.app
+Version name: 1.3.0
+Version code: 4
 
-Use the SAME four GitHub signing secrets as v1.0/v1.1. Do not generate a new signing key.
-Replace the flat source files in the Android GitHub repository, replace the workflow contents with FINAL-RELEASE-WORKFLOW.yml, then run the release workflow.
-The artifact will be named Flip-Rush-7-v1.2-Microphone-Release and will contain Flip-Rush-7-v1.2.apk.
+Microphone support:
+- android.permission.RECORD_AUDIO is declared.
+- Android WebView microphone permission is granted only to the trusted Flip Rush 7 Render origin.
+
+Required existing GitHub Actions repository secrets:
+ANDROID_KEYSTORE_BASE64
+ANDROID_KEYSTORE_PASSWORD
+ANDROID_KEY_ALIAS
+ANDROID_KEY_PASSWORD
+
+IMPORTANT:
+Use the SAME signing secrets/key already created for Flip Rush 7 v1.0.
+Do not create a new signing key. A new key would prevent normal app updates.
+
+GITHUB WORKFLOW:
+Paste FINAL-RELEASE-WORKFLOW.yml into the workflow file under .github/workflows/ in GitHub.
+Delete old duplicate Upload APK / Find APK steps. The final workflow contains exactly one artifact upload.
+
+FINAL OUTPUT:
+Artifact name: Flip-Rush-7-v1.3-FINAL
+APK inside: Flip-Rush-7-v1.3.apk
+
+This is a release APK, not a debug APK.

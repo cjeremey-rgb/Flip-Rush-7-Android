@@ -1,4 +1,4 @@
-name: Build Flip Rush 7 v1.2 Microphone Release
+name: Build Flip Rush 7 v1.3 FINAL Release
 
 on:
   workflow_dispatch:
@@ -41,7 +41,7 @@ jobs:
           test -n "$ANDROID_KEY_PASSWORD"
           printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/flip-rush-7-release-key.jks"
 
-      - name: Build signed release APK
+      - name: Build signed RELEASE APK
         env:
           FR7_KEYSTORE_PATH: ${{ runner.temp }}/flip-rush-7-release-key.jks
           FR7_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
@@ -49,18 +49,20 @@ jobs:
           FR7_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: gradle assembleRelease
 
-      - name: Prepare final APK
+      - name: Prepare final app
         run: |
           APK=$(find build/outputs/apk/release -type f -name '*.apk' | head -n 1)
           test -n "$APK"
-          cp "$APK" Flip-Rush-7-v1.2.apk
-          sha256sum Flip-Rush-7-v1.2.apk > Flip-Rush-7-v1.2.sha256.txt
+          cp "$APK" Flip-Rush-7-v1.3.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs Flip-Rush-7-v1.3.apk
+          sha256sum Flip-Rush-7-v1.3.apk > Flip-Rush-7-v1.3.sha256.txt
 
-      - name: Upload final app
+      - name: Upload FINAL APK
         uses: actions/upload-artifact@v4
         with:
-          name: Flip-Rush-7-v1.2-Microphone-Release
+          name: Flip-Rush-7-v1.3-FINAL
           path: |
-            Flip-Rush-7-v1.2.apk
-            Flip-Rush-7-v1.2.sha256.txt
+            Flip-Rush-7-v1.3.apk
+            Flip-Rush-7-v1.3.sha256.txt
           if-no-files-found: error
+          retention-days: 30

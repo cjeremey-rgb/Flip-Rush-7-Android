@@ -6,8 +6,7 @@ import javax.imageio.ImageIO
 import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 
-// The GitHub browser upload used for this project flattens folders.
-// These tasks reconstruct the normal Android source/resource layout at build time.
+// Intentionally flat GitHub project. Normal Android folders are reconstructed at build time.
 def flatJavaDir = file("$projectDir/.flat-java")
 def flatResDir = file("$projectDir/.flat-res")
 
@@ -76,7 +75,12 @@ def signingPath = System.getenv('FR7_KEYSTORE_PATH')
 def signingStorePassword = System.getenv('FR7_KEYSTORE_PASSWORD')
 def signingAlias = System.getenv('FR7_KEY_ALIAS')
 def signingKeyPassword = System.getenv('FR7_KEY_PASSWORD')
+
+// A final release must be signed. Fail instead of silently producing an unsigned APK.
 def hasReleaseSigning = signingPath && signingStorePassword && signingAlias && signingKeyPassword
+if (gradle.startParameter.taskNames.any { it.toLowerCase().contains('release') } && !hasReleaseSigning) {
+    throw new GradleException('Release signing credentials are required. Configure the four GitHub Actions signing secrets.')
+}
 
 android {
     namespace 'com.fliprush7.app'
@@ -86,8 +90,8 @@ android {
         applicationId 'com.fliprush7.app'
         minSdk 24
         targetSdk 35
-        versionCode 3
-        versionName '1.2.0'
+        versionCode 4
+        versionName '1.3.0'
     }
 
     sourceSets {
@@ -98,28 +102,20 @@ android {
         }
     }
 
-    if (hasReleaseSigning) {
-        signingConfigs {
-            release {
-                storeFile file(signingPath)
-                storePassword signingStorePassword
-                keyAlias signingAlias
-                keyPassword signingKeyPassword
-            }
+    signingConfigs {
+        release {
+            storeFile file(signingPath)
+            storePassword signingStorePassword
+            keyAlias signingAlias
+            keyPassword signingKeyPassword
         }
     }
 
     buildTypes {
-        debug {
-            applicationIdSuffix '.debug'
-            versionNameSuffix '-debug'
-        }
         release {
             minifyEnabled false
             shrinkResources false
-            if (hasReleaseSigning) {
-                signingConfig signingConfigs.release
-            }
+            signingConfig signingConfigs.release
         }
     }
 
