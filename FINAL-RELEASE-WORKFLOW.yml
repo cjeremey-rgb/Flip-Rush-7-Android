@@ -1,4 +1,4 @@
-name: Build Flip Rush 7 v1.1 Voice Release
+name: Build Flip Rush 7 v1.2 Microphone Release
 
 on:
   workflow_dispatch:
@@ -53,14 +53,14 @@ jobs:
         run: |
           APK=$(find build/outputs/apk/release -type f -name '*.apk' | head -n 1)
           test -n "$APK"
-          cp "$APK" Flip-Rush-7-v1.1.apk
-          sha256sum Flip-Rush-7-v1.1.apk > Flip-Rush-7-v1.1.sha256.txt
+          cp "$APK" Flip-Rush-7-v1.2.apk
+          sha256sum Flip-Rush-7-v1.2.apk > Flip-Rush-7-v1.2.sha256.txt
 
       - name: Upload final app
         uses: actions/upload-artifact@v4
         with:
-          name: Flip-Rush-7-v1.1-Voice-Release
+          name: Flip-Rush-7-v1.2-Microphone-Release
           path: |
-            Flip-Rush-7-v1.1.apk
-            Flip-Rush-7-v1.1.sha256.txt
+            Flip-Rush-7-v1.2.apk
+            Flip-Rush-7-v1.2.sha256.txt
           if-no-files-found: error
