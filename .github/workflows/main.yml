@@ -49,7 +49,7 @@ jobs:
           path: "**/*.apk"
           if-no-files-found: error
           
-        - name: Find built APK
+      - name: Find built APK
         run: find . -type f -name "*.apk" -print
 
       - name: Upload APK
