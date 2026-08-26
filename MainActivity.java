@@ -4,7 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.media.AudioDeviceInfo;
+import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.PermissionRequest;
@@ -20,10 +23,13 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private PermissionRequest pendingAudioRequest;
+    private AudioManager audioManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
         webView = new WebView(this);
         webView.setBackgroundColor(Color.rgb(7, 16, 29));
@@ -88,6 +94,7 @@ public class MainActivity extends Activity {
         }
 
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
+            routeVoiceToSpeaker();
             request.grant(new String[]{PermissionRequest.RESOURCE_AUDIO_CAPTURE});
             return;
         }
@@ -106,10 +113,45 @@ public class MainActivity extends Activity {
         if (request == null) return;
 
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && isTrustedOrigin(request.getOrigin())) {
+            routeVoiceToSpeaker();
             request.grant(new String[]{PermissionRequest.RESOURCE_AUDIO_CAPTURE});
         } else {
             request.deny();
         }
+    }
+
+    private void routeVoiceToSpeaker() {
+        if (audioManager == null) return;
+        try {
+            audioManager.setMode(AudioManager.MODE_IN_COMMUNICATION);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                for (AudioDeviceInfo device : audioManager.getAvailableCommunicationDevices()) {
+                    if (device.getType() == AudioDeviceInfo.TYPE_BUILTIN_SPEAKER) {
+                        audioManager.setCommunicationDevice(device);
+                        break;
+                    }
+                }
+            } else {
+                audioManager.setSpeakerphoneOn(true);
+            }
+        } catch (Exception ignored) {
+            try { audioManager.setSpeakerphoneOn(true); } catch (Exception ignoredAgain) {}
+        }
+    }
+
+    private void restoreNormalAudioRoute() {
+        if (audioManager == null) return;
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) audioManager.clearCommunicationDevice();
+            else audioManager.setSpeakerphoneOn(false);
+            audioManager.setMode(AudioManager.MODE_NORMAL);
+        } catch (Exception ignored) {}
+    }
+
+    @Override
+    protected void onDestroy() {
+        restoreNormalAudioRoute();
+        super.onDestroy();
     }
 
     @Override

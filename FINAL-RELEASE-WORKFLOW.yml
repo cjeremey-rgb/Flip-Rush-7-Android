@@ -1,4 +1,4 @@
-name: Build Flip Rush 7 v1.3 FINAL Release
+name: Build Flip Rush 7 v1.4 FINAL Release
 
 on:
   workflow_dispatch:
@@ -53,16 +53,16 @@ jobs:
         run: |
           APK=$(find build/outputs/apk/release -type f -name '*.apk' | head -n 1)
           test -n "$APK"
-          cp "$APK" Flip-Rush-7-v1.3.apk
-          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs Flip-Rush-7-v1.3.apk
-          sha256sum Flip-Rush-7-v1.3.apk > Flip-Rush-7-v1.3.sha256.txt
+          cp "$APK" Flip-Rush-7-v1.4.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs Flip-Rush-7-v1.4.apk
+          sha256sum Flip-Rush-7-v1.4.apk > Flip-Rush-7-v1.4.sha256.txt
 
       - name: Upload FINAL APK
         uses: actions/upload-artifact@v4
         with:
-          name: Flip-Rush-7-v1.3-FINAL
+          name: Flip-Rush-7-v1.4-FINAL
           path: |
-            Flip-Rush-7-v1.3.apk
-            Flip-Rush-7-v1.3.sha256.txt
+            Flip-Rush-7-v1.4.apk
+            Flip-Rush-7-v1.4.sha256.txt
           if-no-files-found: error
           retention-days: 30
